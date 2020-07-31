@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Create TestCase",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "userId": {
+      "type": "string"
+    },
+    "createdDate": {
+      "type": "string"
+    },
+  },
+  "required": [
+    "name",
+    "userId",
+    "createdDate"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,116 @@
+service:
+  name: udacity-cloud-developer-capstone
+
+plugins:
+  - serverless-webpack
+  - serverless-iam-roles-per-function
+  - serverless-reqvalidator-plugin
+  - serverless-aws-documentation
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  environment:
+    TESTCASE_TABLE: ud-capstone-tasecase-${self:provider.stage}
+    TESTCASE_USER_INDEX: TestCaseUserIndex
+    SIGNED_URL_EXPIRATION: 300
+  tracing:
+    lambda: true
+    apiGateway: true
+
+custom:
+  documentation:
+    models:
+      - name: CreateTestCaseRequest
+        contentType: application/json
+        schema: ${file(src/models/validation/create-testcase-request.json)}
+
+functions:
+  Auth:
+    handler: src/lambda/auth/auth0Authorizer.handler
+  GetTestCase:
+    handler: src/lambda/http/GetTestCase.handler
+    role: GetTestCaseRole
+    events:
+      - http:
+          method: get
+          path: todos
+          cors: true
+          authorizer: Auth
+  CreateTestCase:
+    handler: src/lambda/http/CreateTestCase.handler
+    role: CreateTestCaseRole
+    events:
+      - http:
+          method: post
+          path: todos
+          cors: true
+          authorizer: Auth
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: Create testcase
+            description: Create a new testcase
+            requestModels:
+              'application/json': CreateTestCaseRequest
+
+resources:
+  Resources:
+    RequestBodyValidator:
+      Type: AWS::ApiGateway::RequestValidator
+      Properties:
+        Name: 'request-body-validator'
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        ValidateRequestBody: true
+        ValidateRequestParameters: false
+    TestCaseDynamoDBTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: testCaseId
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: testCaseId
+            KeyType: HASH
+          - AttributeName: userId
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.TESTCASE_TABLE}
+        GlobalSecondaryIndexes:
+          - IndexName: ${self:provider.environment.TESTCASE_USER_INDEX}
+            KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+    CreateTestCaseRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: CreateTestCaseRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: CreateTestCasePolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:PutItem
+                  Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TESTCASE_TABLE}
+                - Effect: Allow
+                  Action:
+                    - "xray:PutTraceSegments"
+                    - "xray:PutTelemetryRecords"
+                  Resource:
+                    - "*"
