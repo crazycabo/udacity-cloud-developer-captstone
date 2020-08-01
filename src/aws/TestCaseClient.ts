@@ -4,6 +4,7 @@ import { APIGatewayProxyEvent } from 'aws-lambda'
 import { createLogger } from '../utils/Logger'
 import { TestCase } from '../models/TestCase'
 import { CreateTestCaseRequest } from '../requests/CreateTestCaseRequest'
+import { UpdateTestCaseRequest } from '../requests/UpdateTestCaseRequest'
 import { getUserId } from './Utils'
 import * as uuid from 'uuid'
 
@@ -52,10 +53,44 @@ export async function createTestCase(event: APIGatewayProxyEvent): Promise<TestC
   return testCase
 }
 
-// export async function updateTestCase(event: APIGatewayProxyEvent): Promise<TestCase> {
-//
-// }
-//
-// export async function deleteTestCase(event: APIGatewayProxyEvent) {
-//
-// }
+export async function updateTestCase(event: APIGatewayProxyEvent) {
+  const testCaseId = event.pathParameters.testCaseId
+  const userId = getUserId(event)
+  const currentTestCase: UpdateTestCaseRequest = JSON.parse(event.body)
+
+  const newTestCase = {
+    TableName: testCaseTable,
+    Key: {
+      testCaseId,
+      userId
+    },
+    UpdateExpression: 'set title = :title, description = :description',
+    ExpressionAttributeValues: {
+      ':title': currentTestCase.title,
+      ':description': currentTestCase.description
+    }
+  }
+
+  logger.info(`Update testcase ID: ${testCaseId}`)
+
+  await docClient.update(newTestCase).promise()
+}
+
+export async function deleteTestCase(event: APIGatewayProxyEvent): Promise<string> {
+  const testCaseId = event.pathParameters.testCaseId
+  const userId = getUserId(event)
+
+  const testCase = {
+    TableName: testCaseTable,
+    Key: {
+      testCaseId,
+      userId
+    }
+  }
+
+  logger.info(`Delete testcase ID: ${testCaseId}`)
+
+  await docClient.delete(testCase).promise()
+
+  return testCaseId
+}

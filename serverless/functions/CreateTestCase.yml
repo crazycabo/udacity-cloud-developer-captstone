@@ -1,0 +1,26 @@
+CreateTestCase:
+  handler: src/lambda/http/CreateTestCase.handler
+  events:
+    - http:
+        method: post
+        path: testcases
+        cors: true
+        authorizer: Auth
+        reqValidatorName: RequestBodyValidator
+        documentation:
+          summary: Create testcase
+          description: Create a new testcase
+          requestModels:
+            'application/json': CreateTestCaseRequest
+  iamRoleStatementsName: CreateTestRole
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TESTCASE_TABLE}
+    - Effect: Allow
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource:
+        - "*"

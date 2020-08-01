@@ -1,6 +1,6 @@
 import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
-import { getTestCases } from '../../aws/DynamoDbClient'
+import { getTestCases } from '../../aws/TestCaseClient'
 import { createLogger } from '../../utils/Logger'
 
 const logger = createLogger('http')
@@ -30,7 +30,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         'Access-Control-Allow-Credentials': true
       },
       body: JSON.stringify({
-        'message': `Error processing request: ${error}`
+        'message': `Error processing request`,
+        'error': `${error}`
       })
     }
   }

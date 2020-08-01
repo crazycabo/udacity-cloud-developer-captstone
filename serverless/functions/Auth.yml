@@ -1,0 +1,2 @@
+Auth:
+  handler: src/lambda/auth/Auth0Authorizer.handler
