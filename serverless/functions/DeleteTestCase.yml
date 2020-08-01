@@ -10,9 +10,12 @@ DeleteTestCase:
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - dynamodb:Query
         - dynamodb:DeleteItem
       Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TESTCASE_TABLE}
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TESTCASE_TABLE}/index/${self:provider.environment.TESTCASE_USER_INDEX}
     - Effect: Allow
       Action:
         - "xray:PutTraceSegments"
