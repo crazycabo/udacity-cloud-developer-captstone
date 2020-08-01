@@ -29,14 +29,14 @@ custom:
 
 functions:
   Auth:
-    handler: src/lambda/auth/auth0Authorizer.handler
-  GetTestCase:
-    handler: src/lambda/http/GetTestCase.handler
-    role: GetTestCaseRole
+    handler: src/lambda/auth/Auth0Authorizer.handler
+  GetTestCases:
+    handler: src/lambda/http/GetTestCases.handler
+    role: GetTestCasesRole
     events:
       - http:
           method: get
-          path: todos
+          path: testcases
           cors: true
           authorizer: Auth
   CreateTestCase:
@@ -45,7 +45,7 @@ functions:
     events:
       - http:
           method: post
-          path: todos
+          path: testcases
           cors: true
           authorizer: Auth
           reqValidatorName: RequestBodyValidator
@@ -87,6 +87,37 @@ resources:
               KeyType: HASH
             Projection:
               ProjectionType: ALL
+    GetTestCasesRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: GetTestCasesRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: CreateTestCasePolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:GetItem
+                  Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TESTCASE_TABLE}
+                - Effect: Allow
+                  Action:
+                    - dynamodb:Query
+                  Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TESTCASE_TABLE}/index/${self:provider.environment.TESTCASE_USER_INDEX}
+                - Effect: Allow
+                  Action:
+                    - "xray:PutTraceSegments"
+                    - "xray:PutTelemetryRecords"
+                  Resource:
+                    - "*"
     CreateTestCaseRole:
       Type: AWS::IAM::Role
       Properties:

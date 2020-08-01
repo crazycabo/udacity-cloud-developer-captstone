@@ -6,17 +6,13 @@
     "name": {
       "type": "string"
     },
-    "userId": {
+    "description": {
       "type": "string"
-    },
-    "createdDate": {
-      "type": "string"
-    },
+    }
   },
   "required": [
     "name",
-    "userId",
-    "createdDate"
+    "description"
   ],
   "additionalProperties": false
 }
