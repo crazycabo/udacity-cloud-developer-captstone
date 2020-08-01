@@ -26,122 +26,18 @@ custom:
       - name: CreateTestCaseRequest
         contentType: application/json
         schema: ${file(src/models/validation/create-testcase-request.json)}
+      - name: UpdateTestCaseRequest
+        contentType: application/json
+        schema: ${file(src/models/validation/update-testcase-request.json)}
 
 functions:
-  Auth:
-    handler: src/lambda/auth/Auth0Authorizer.handler
-  GetTestCases:
-    handler: src/lambda/http/GetTestCases.handler
-    role: GetTestCasesRole
-    events:
-      - http:
-          method: get
-          path: testcases
-          cors: true
-          authorizer: Auth
-  CreateTestCase:
-    handler: src/lambda/http/CreateTestCase.handler
-    role: CreateTestCaseRole
-    events:
-      - http:
-          method: post
-          path: testcases
-          cors: true
-          authorizer: Auth
-          reqValidatorName: RequestBodyValidator
-          documentation:
-            summary: Create testcase
-            description: Create a new testcase
-            requestModels:
-              'application/json': CreateTestCaseRequest
+  Auth: ${file(serverless/functions/Auth.yml):Auth}
+  GetTestCases: ${file(serverless/functions/GetTestCases.yml):GetTestCases}
+  CreateTestCase: ${file(serverless/functions/CreateTestCase.yml):CreateTestCase}
+  UpdateTestCase: ${file(serverless/functions/UpdateTestCase.yml):UpdateTestCase}
+  DeleteTestCase: ${file(serverless/functions/DeleteTestCase.yml):DeleteTestCase}
 
 resources:
   Resources:
-    RequestBodyValidator:
-      Type: AWS::ApiGateway::RequestValidator
-      Properties:
-        Name: 'request-body-validator'
-        RestApiId:
-          Ref: ApiGatewayRestApi
-        ValidateRequestBody: true
-        ValidateRequestParameters: false
-    TestCaseDynamoDBTable:
-      Type: "AWS::DynamoDB::Table"
-      Properties:
-        AttributeDefinitions:
-          - AttributeName: testCaseId
-            AttributeType: S
-          - AttributeName: userId
-            AttributeType: S
-        KeySchema:
-          - AttributeName: testCaseId
-            KeyType: HASH
-          - AttributeName: userId
-            KeyType: RANGE
-        BillingMode: PAY_PER_REQUEST
-        TableName: ${self:provider.environment.TESTCASE_TABLE}
-        GlobalSecondaryIndexes:
-          - IndexName: ${self:provider.environment.TESTCASE_USER_INDEX}
-            KeySchema:
-            - AttributeName: userId
-              KeyType: HASH
-            Projection:
-              ProjectionType: ALL
-    GetTestCasesRole:
-      Type: AWS::IAM::Role
-      Properties:
-        RoleName: GetTestCasesRole
-        AssumeRolePolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Principal:
-                Service:
-                  - lambda.amazonaws.com
-              Action: sts:AssumeRole
-        Policies:
-          - PolicyName: CreateTestCasePolicy
-            PolicyDocument:
-              Version: '2012-10-17'
-              Statement:
-                - Effect: Allow
-                  Action:
-                    - dynamodb:GetItem
-                  Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TESTCASE_TABLE}
-                - Effect: Allow
-                  Action:
-                    - dynamodb:Query
-                  Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TESTCASE_TABLE}/index/${self:provider.environment.TESTCASE_USER_INDEX}
-                - Effect: Allow
-                  Action:
-                    - "xray:PutTraceSegments"
-                    - "xray:PutTelemetryRecords"
-                  Resource:
-                    - "*"
-    CreateTestCaseRole:
-      Type: AWS::IAM::Role
-      Properties:
-        RoleName: CreateTestCaseRole
-        AssumeRolePolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Principal:
-                Service:
-                  - lambda.amazonaws.com
-              Action: sts:AssumeRole
-        Policies:
-          - PolicyName: CreateTestCasePolicy
-            PolicyDocument:
-              Version: '2012-10-17'
-              Statement:
-                - Effect: Allow
-                  Action:
-                    - dynamodb:PutItem
-                  Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TESTCASE_TABLE}
-                - Effect: Allow
-                  Action:
-                    - "xray:PutTraceSegments"
-                    - "xray:PutTelemetryRecords"
-                  Resource:
-                    - "*"
+    RequestBodyValidator: ${file(serverless/resources/RequestBodyValidator.yml):RequestBodyValidator}
+    TestCaseDynamoDBTable: ${file(serverless/resources/TestCaseDynamoDBTable.yml):TestCaseDynamoDBTable}

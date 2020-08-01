@@ -1,0 +1,26 @@
+UpdateTestCase:
+  handler: src/lambda/http/UpdateTestCase.handler
+  events:
+    - http:
+        method: patch
+        path: testcases/{testCaseId}
+        cors: true
+        authorizer: Auth
+        reqValidatorName: RequestBodyValidator
+        documentation:
+          summary: Update testcase
+          description: Update a new testcase
+          requestModels:
+            'application/json': UpdateTestCaseRequest
+  iamRoleStatementsName: UpdateTestRole
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:UpdateItem
+      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TESTCASE_TABLE}
+    - Effect: Allow
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource:
+        - "*"

@@ -1,4 +1,4 @@
 export interface CreateTestCaseRequest {
-  name: string
+  title: string
   description: string
 }
