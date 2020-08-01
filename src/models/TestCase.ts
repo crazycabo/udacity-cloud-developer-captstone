@@ -1,5 +1,5 @@
 export interface TestCase {
-  id: string
+  testCaseId: string
   userId: string
   createdAt: string
   name: string

@@ -36,7 +36,7 @@ export async function createTestCase(event: APIGatewayProxyEvent): Promise<TestC
   const userId = getUserId(event)
 
   const testCase = {
-    id: uuid.v4(),
+    testCaseId: uuid.v4(),
     userId: userId,
     createdAt: new Date().toISOString(),
     ...parsedEventBody
