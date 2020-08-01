@@ -1,0 +1,230 @@
+{
+	"info": {
+		"_postman_id": "043eb456-b41e-42d7-95a5-dec3b92e4510",
+		"name": "Test Management Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "TestCases",
+			"item": [
+				{
+					"name": "Get all test cases",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "https://{{gatewayId}}.execute-api.us-east-1.amazonaws.com/dev/testcases",
+							"protocol": "https",
+							"host": [
+								"{{gatewayId}}",
+								"execute-api",
+								"us-east-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"testcases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create test case",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Another test\",\n    \"description\": \"So much to verify\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{gatewayId}}.execute-api.us-east-1.amazonaws.com/dev/testcases",
+							"protocol": "https",
+							"host": [
+								"{{gatewayId}}",
+								"execute-api",
+								"us-east-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"testcases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update test case",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Updated Test\",\n    \"description\": \"I just updated this test, yay!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{gatewayId}}.execute-api.us-east-1.amazonaws.com/dev/testcases/3cbd9f53-408a-49bd-9147-80992752f435",
+							"protocol": "https",
+							"host": [
+								"{{gatewayId}}",
+								"execute-api",
+								"us-east-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"testcases",
+								"3cbd9f53-408a-49bd-9147-80992752f435"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete test case",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{gatewayId}}.execute-api.us-east-1.amazonaws.com/dev/testcases/559e53ed-f6e5-4fcf-bbd2-223a75e324df",
+							"protocol": "https",
+							"host": [
+								"{{gatewayId}}",
+								"execute-api",
+								"us-east-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"testcases",
+								"559e53ed-f6e5-4fcf-bbd2-223a75e324df"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "accessToken",
+				"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjdqUW93WVl1WjZLMklVdVdfWGJrUSJ9.eyJpc3MiOiJodHRwczovL2Rldi01dTJqYmtlbS51cy5hdXRoMC5jb20vIiwic3ViIjoiZ29vZ2xlLW9hdXRoMnwxMDE1NjU2NDgwODY0NDcxMjg2MzciLCJhdWQiOiJodHRwczovL3Rlc3QtbWFuYWdlbWVudC1hcGkvIiwiaWF0IjoxNTk2MjUwNzg1LCJleHAiOjE1OTYzMzcxODUsImF6cCI6IkRaSkZNTHo2UzBDdGdka3IyUHdETllvd1k0aE1Wa2xVIn0.bcH26lns9fOm9n_Izo8SILxSJwnmFZUo4QWcTsr-glsYF1yFFQI6DeCPP9OTwS7Owe_FxYIkC_wFnTBARakw1ka_mur2XAwYtFELSGY_S7iQjUpiojPXuNRtl4mm9lcZXBTcLsDch3CEUBquENHk3cHQ7awb_-zf-T35mVpgmUOyVKqfwV0fh-ZuOXYO1YuJedVZc3EnVgA6W87aYeahZ-uYyhdrat5-mzCgNOpr9ZMgbf-Fzc4L6my1RRPpnMq-Ejfnkyvb7zhEeJwEktAmnsZCb6CD3MJ04640S_THeBubgIHO04J0KbW-5hQtE8s6--bAiTJtmYkdXVcZJx6NiQ",
+				"type": "string"
+			},
+			{
+				"key": "tokenType",
+				"value": "Bearer",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "9b2fc684-f243-4dd9-9d50-8e7192446577",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "ee0293b5-f60f-48a8-af85-3108b5caa398",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "f05dd4ed-b819-49a7-a194-302d192f1e1a",
+			"key": "gatewayId",
+			"value": "j0kvcff53j"
+		},
+		{
+			"id": "fe84a61c-56fd-4b70-833a-76718d8606e4",
+			"key": "auth0_domain",
+			"value": "dev-5u2jbkem.us.auth0.com"
+		},
+		{
+			"id": "4d7c1e9b-6950-4af6-bed7-127977b8a133",
+			"key": "auth0_client_id",
+			"value": "DZJFMLz6S0Ctgdkr2PwDNYowY4hMVklU"
+		},
+		{
+			"id": "fe3c5455-802a-427d-b41a-132a646cb088",
+			"key": "auth0_client_secret",
+			"value": "x"
+		},
+		{
+			"id": "920d722f-b81e-4856-a1c7-7e33344d79e7",
+			"key": "auth0_audience",
+			"value": "https://test-management-api/"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
