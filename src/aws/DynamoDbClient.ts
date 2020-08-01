@@ -2,6 +2,9 @@ import * as AWS  from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
 import { APIGatewayProxyEvent } from 'aws-lambda'
 import { createLogger } from '../utils/Logger'
+import { TestCase } from '../models/TestCase'
+import { CreateTestCaseRequest } from '../requests/CreateTestCaseRequest'
+import { getUserId } from './Utils'
 import * as uuid from 'uuid'
 
 const logger = createLogger('dynamoDb')
@@ -25,11 +28,11 @@ export async function getTestCases(event: APIGatewayProxyEvent): Promise<TestCas
     }
   }).promise()
 
-  return result.TestCases as TestCase[]
+  return result.Items as TestCase[]
 }
 
 export async function createTestCase(event: APIGatewayProxyEvent): Promise<TestCase> {
-  const parsedEventBody: CreateTodoRequest = JSON.parse(event.body)
+  const parsedEventBody: CreateTestCaseRequest = JSON.parse(event.body)
   const userId = getUserId(event)
 
   const testCase = {
@@ -43,7 +46,7 @@ export async function createTestCase(event: APIGatewayProxyEvent): Promise<TestC
 
   await docClient.put({
     TableName: testCaseTable,
-    TestCase: testCase
+    Item: testCase
   }).promise()
 
   return testCase
