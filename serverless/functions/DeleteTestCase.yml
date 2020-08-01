@@ -1,5 +1,5 @@
 DeleteTestCase:
-  handler: src/lambda/http/DeleteTestCases.handler
+  handler: src/lambda/http/DeleteTestCase.handler
   events:
     - http:
         method: delete
